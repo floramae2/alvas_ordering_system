@@ -286,7 +286,7 @@ const Page = () => {
                     <CardHeader>
                         <CardTitle>Change Password</CardTitle>
                         <CardDescription>
-                            Change password settings for admin.
+                            Change password settings for cashier.
                         </CardDescription>
                     </CardHeader>
                     {
