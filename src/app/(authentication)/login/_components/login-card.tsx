@@ -91,7 +91,7 @@ export function LoginCard() {
     <Card className="md:w-[450px] lg:w-[450px] w-full m-5 p-2 px-3 rounded-xl">
       <CardHeader>
         <CardTitle className=" text-center text-2xl font-bold">LOGIN</CardTitle>
-        <CardDescription className=" text-center text-sm text-white">{`Alvas admin's and cashier's login portal`}</CardDescription>
+        <CardDescription className=" text-center text-sm text-white">{`Alva's admin's and cashier's login portal`}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>

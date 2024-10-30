@@ -4,18 +4,12 @@ import { Card } from "@/components/ui/card";
 import { api } from "@/trpc/react";
 import Loading from "../_components/loading";
 import { useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { type $Enums } from "@prisma/client";
 import { ShoppingBasket } from "lucide-react";
 import { AddOrderModal } from "./_components/add-order-modal";
 import { SubmitOrderModal } from "./_components/submit-order-modal";
 import { useParams } from "next/navigation";
+import HorizontalScrollComponent from "./_components/scrolling";
 
 const sorting = [
   { category: "FRIED CHICKEN", value: 1 },
@@ -148,16 +142,15 @@ const Page = () => {
               </div>
             )}
             <div className="flex flex-col gap-2 overflow-hidden">
-              {productsToShow()?.map((prod) => {
+              {productsToShow()?.map((prod, index) => {
                 return (
                   <div key={prod.category} className="w-full">
                     <p className="mb-1 mt-2 rounded bg-green-700 p-1 text-center text-sm font-bold text-white">
                       {prod.category}
                     </p>
-                    <div
-                      className={`flex w-full flex-row gap-1 overflow-hidden overflow-x-auto rounded border border-slate-100 bg-white p-1 ${category !== "ALL" && "grid w-full grid-cols-3 gap-1"}`}
-                    >
-                      {prod.products.map((product) => {
+                    <HorizontalScrollComponent key={index}>
+                      <div  className={`flex w-full flex-row gap-1 overflow-hidden overflow-x-auto rounded border border-slate-100 bg-white p-1 ${category !== "ALL" && "grid w-full grid-cols-3 gap-1"}`}>
+                        {prod.products.map((product) => {
                         return (
                           <div
                             onClick={() =>
@@ -179,7 +172,8 @@ const Page = () => {
                           </div>
                         );
                       })}
-                    </div>
+                      </div>
+                    </HorizontalScrollComponent>
                   </div>
                 );
               })}
