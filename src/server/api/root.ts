@@ -18,6 +18,7 @@ import { customerAccountRouter } from "./routers/customer/account";
 import { riderAccountRouter } from "./routers/rider/account";
 import { riderDeliveryRouter } from "./routers/rider/delivery";
 import { riderTransactionRouter } from "./routers/rider/transaction";
+import { salesRouter } from "./routers/admin/sales";
 
 /**
  * This is the primary router for your server.
@@ -33,6 +34,7 @@ export const appRouter = createTRPCRouter({
   rider : riderRouter,
   transaction  : transactionRouter,
   dashboard : dashboardRouter,
+  sales : salesRouter,
   user_cashier : {
     order : cashierOrderRouter,
     transaction : cashierTransactionRouter,
