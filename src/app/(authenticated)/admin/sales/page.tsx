@@ -43,6 +43,7 @@ type Sales = {
   category: string;
   product_name?: string;
   total_sales: number;
+  count: number;
 };
 const Staffs = () => {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -84,12 +85,12 @@ const Staffs = () => {
         const foundData = data[ord.category];
         data[ord.category] = {
           category: ord.category,
+          count: (foundData?.count || 0) + 1,
           product_name: ord.product.product_name,
           total_sales:
             (foundData?.total_sales || 0) + (ord.quantity + ord.product.amount),
         };
       });
-      console.log(data);
     } else {
       orders.forEach((ord) => {
         const foundData =
@@ -97,6 +98,7 @@ const Staffs = () => {
         data[ord.product.product_name + ord.product.product_name] = {
           category: ord.category,
           product_name: ord.product.product_name,
+          count: (foundData?.count || 0) + 1,
           total_sales:
             (foundData?.total_sales || 0) + (ord.quantity + ord.product.amount),
         };
@@ -244,6 +246,7 @@ const Staffs = () => {
               {
                 category: "Total Sale",
                 product_name: "",
+                count:undefined,
                 total_sales: sales.reduce(
                   (arr, curr) => arr + curr.total_sales,
                   0,
@@ -253,12 +256,14 @@ const Staffs = () => {
               if (showBy === "CATEGORY") {
                 return {
                   Category: sale.category,
+                  Count: !Number.isNaN(sale.count) ? sale.count : "",
                   Sale: sale.total_sales,
                 };
               } else {
                 return {
                   Category: sale.category,
                   ["Product name"]: sale.product_name,
+                  Count: !Number.isNaN(sale.count) ? sale.count : "",
                   Sale: sale.total_sales,
                 };
               }
@@ -285,6 +290,9 @@ const Staffs = () => {
               <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
                 Category
               </TableHead>
+              <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
+                Orders
+              </TableHead>
               <TableHead className="text-end text-xl font-bold uppercase text-black dark:text-white">
                 Sales
               </TableHead>
@@ -303,6 +311,9 @@ const Staffs = () => {
                     )}
                     <TableCell className="text-start">
                       {sale.category}
+                    </TableCell>
+                    <TableCell className="text-start">
+                      {sale.count}
                     </TableCell>
                     <TableCell className="text-end">
                       {formatCurrency(sale.total_sales)}

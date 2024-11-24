@@ -38,7 +38,7 @@ const MarkDoneOrder = ({refetchTransaction ,transactionIds, grouped_delivery_id}
         })
     }
     return ( 
-        <CardFooter className="flex flex-row items-center justify-end border-t bg-muted/50 px-6 py-3">
+        <CardFooter className="flex flex-row items-center justify-end px-6 py-3">
             <Button size={"sm"} onClick={onCancel} variant={"default"} disabled={isPending || isRefetching}>Transaction Done</Button>
         </CardFooter> );
 }

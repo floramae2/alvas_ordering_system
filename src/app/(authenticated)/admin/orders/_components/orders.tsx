@@ -87,7 +87,7 @@ const OrdersContent = ({
   const refetch = async () => {
     await Promise.all([refetchTransaction(), refetchRiders()]);
   };
-
+console.log(transactions?.[0]?.status)
   return (
     <Card x-chunk="dashboard-05-chunk-3" className="h-full">
       <CardHeader className="px-7">
@@ -107,7 +107,7 @@ const OrdersContent = ({
               <TableHead className="text-start">Sub Total</TableHead>
               <TableHead className="text-start">Delivery Fee</TableHead>
               <TableHead className="text-start">Total Amount</TableHead>
-              <TableHead className="w-[100px] text-center">Actions</TableHead>
+              {["PENDING", "ONGOING", "DELIVERED"].includes(transactions?.[0]?.status || "") && <TableHead className="w-[100px] text-center">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -164,7 +164,7 @@ const OrdersContent = ({
                     >
                       {formatCurrency(transaction.total_amount)}
                     </TableCell>
-                    <TableCell className="w-[100px]">
+                    {["PENDING", "ONGOING", "DELIVERED"].includes(transactions?.[0]?.status || "") && <TableCell className="w-[100px]">
                       {transaction.status === "PENDING" && (
                         <AssignRider
                           riderIsLoading={riderIsLoading}
@@ -199,7 +199,7 @@ const OrdersContent = ({
                           grouped_delivery_id={transaction.grouped_delivery_id}
                         />
                       )}
-                    </TableCell>
+                    </TableCell>}
                   </TableRow>
                 );
               })}

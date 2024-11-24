@@ -42,6 +42,9 @@ export const dashboardRouter = createTRPCRouter({
              include : {
                 customer :true,
                 grouped_delivery:true
+             },
+             orderBy : {
+                createdAt : "desc"
              }
         }).then((data)=> data.map((cust)=>{
             return {
@@ -59,6 +62,9 @@ export const dashboardRouter = createTRPCRouter({
                 rider :true,
                 cashier : true,
                 grouped_delivery:true
+             },
+             orderBy : {
+                createdAt : "desc"
              }
         }).then((data)=> data.map((cust)=>{
             const proccessed_by = cust.rider || cust.cashier
