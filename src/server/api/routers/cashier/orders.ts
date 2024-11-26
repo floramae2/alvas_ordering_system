@@ -7,9 +7,13 @@ export const cashierOrderRouter = createTRPCRouter({
       .query(async ({ctx}) => {
         const categories = await ctx.db.product_category.findMany()
           const products = await ctx.db.products.findMany({
-              where : {
-                  status : "AVAILABLE",
+            include : {
+              price_history:{
+                orderBy : {
+                  createdAt:"desc"
+                }
               }
+            }
           })
           if(categories && products){
             return categories.map((cat)=>{
@@ -29,7 +33,8 @@ export const cashierOrderRouter = createTRPCRouter({
         cashier_id :z.number(),
         orders : z.array(z.object({
           product_id :z.number(),
-          quantity : z.number()
+          quantity : z.number(),
+          product_price_id: z.number()
         }))
       }))
       .mutation(async({ input : {

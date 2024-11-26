@@ -1,7 +1,7 @@
 import { SECRET_KEY } from "./secret";
 import jwt from 'jsonwebtoken';
 import { type CredentialsType } from "./types/login";
-import { cookies } from 'next/headers'; 
+import { cookies } from "next/headers";
 
 export function createSessionToken(payload: CredentialsType) {
     // Set token expiration (optional)

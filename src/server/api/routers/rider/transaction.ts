@@ -21,7 +21,8 @@ export const riderTransactionRouter = createTRPCRouter({
             include: {
               orders: {
                 include: {
-                  product: true
+                  product: true,
+                  product_price:true
                 }
               },
               customer: true

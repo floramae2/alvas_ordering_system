@@ -1,7 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@media print {
+  body {
+    margin: 1cm; /* Adds a 2cm margin around the page */
+  }
 
+  /* Optional: Add specific margins to content sections */
+  header, main, footer {
+    margin: 1cm 0; /* 1cm margin above and below */
+  }
+
+  /* Ensure no overflow issues */
+  html, body {
+    overflow: visible !important;
+  }
+
+  /* Hide elements that shouldn't appear in print */
+  .no-print {
+    display: none;
+  }
+}
 @layer base {
   :root {
     --background: 0 0% 100%;

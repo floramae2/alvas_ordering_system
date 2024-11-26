@@ -44,7 +44,7 @@ import { useEffect, useState } from "react"
 import { formatCurrency } from "@/app/helper/format"
 import { type PaginationType } from "@/lib/types/pagination"
 import { DataPagination } from "../category/_components/table-components/pagination"
-import { type orders, type product_category, type products } from "@prisma/client"
+import { product_price_history, type orders, type product_category, type products } from "@prisma/client"
 type StatusType = "AVAILABLE" | "NOT_AVAILABLE"
 type CategoryType = undefined | number
 const ProductsPage = () => {
@@ -57,7 +57,8 @@ const ProductsPage = () => {
   })
   const [products, setProducts] = useState<(products & {
     category : product_category;
-    orders : orders[]
+    price_history:product_price_history[];
+    orders : (orders)[]
   })[]>([])
 
   const { data, isLoading:productsIsLoading, refetch} = api.product.getAllProducts.useQuery()
@@ -165,71 +166,74 @@ const ProductsPage = () => {
                         </TableHeader>
                         {(!productsIsLoading && products?.length) ? <TableBody>
                           {
-                            products.slice(pagination.skip, pagination.skip+pagination.take).map((prod, index)=>(
-                              <TableRow key={index}>
-                                <TableCell className="hidden sm:table-cell">
-                                  <img
-                                    alt="Product image"
-                                    className="aspect-square rounded-md object-cover"
-                                    height="64"
-                                    src={prod.image_url}
-                                    width="64"
-                                  />
-                                </TableCell>
-                                <TableCell className="font-medium">
-                                  {prod.product_name}
-                                </TableCell>
-                                <TableCell>
-                                  <Badge variant="outline">{prod.status}</Badge>
-                                </TableCell>
-                                <TableCell className="font-medium">
-                                  {prod.category.category_name}
-                                </TableCell>
-                                <TableCell>{formatCurrency(prod.amount)}</TableCell>
-                                <TableCell>
-                                  <DropdownMenu key={prod.id}>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button
-                                        aria-haspopup="true"
-                                        size="icon"
-                                        variant="ghost"
-                                      >
-                                        <MoreHorizontal className="h-4 w-4" />
-                                        <span className="sr-only">Toggle menu</span>
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-[100px]">
-                                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                      <Button onClick={onClickAddProduct(prod.id)} size={"sm"} variant={"outline"} className=" w-full">
-                                        Edit
-                                      </Button>
-                                      {status==="AVAILABLE"?<Button
-                                      disabled={archiveProductPending}
-                                      onClick={onArchiveProduct(prod.id, "NOT_AVAILABLE")}
-                                      size={"sm"}
-                                      variant={"outline"}
-                                      className=" mt-1 w-full border-orange-500 text-orange-500">
-                                        Archive
-                                      </Button>:<Button
-                                      disabled={archiveProductPending}
-                                      onClick={onArchiveProduct(prod.id, "AVAILABLE")}
-                                      size={"sm"}
-                                      variant={"outline"}
-                                      className=" mt-1 w-full border-orange-500 text-orange-500">
-                                        Unarchive
-                                      </Button>}
-                                      {!prod.orders.length && <Button 
-                                      disabled={isPending} 
-                                      onClick={()=>deleteProduct({id:Number(prod.id)})} 
-                                      size={"sm"} 
-                                      variant={"outline"} 
-                                      className=" border border-red-400 mt-1 text-red-400 bg-red-50 w-full">
-                                        Delete
-                                      </Button>}
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                </TableCell>
-                              </TableRow>))
+                            products.slice(pagination.skip, pagination.skip+pagination.take).map((prod, index)=>{
+                              console.log(prod.price_history)
+                              return (
+                                <TableRow key={index}>
+                                  <TableCell className="hidden sm:table-cell">
+                                    <img
+                                      alt="Product image"
+                                      className="aspect-square rounded-md object-cover"
+                                      height="64"
+                                      src={prod.image_url}
+                                      width="64"
+                                    />
+                                  </TableCell>
+                                  <TableCell className="font-medium">
+                                    {prod.product_name}
+                                  </TableCell>
+                                  <TableCell>
+                                    <Badge variant="outline">{prod.status}</Badge>
+                                  </TableCell>
+                                  <TableCell className="font-medium">
+                                    {prod.category.category_name}
+                                  </TableCell>
+                                  <TableCell>{formatCurrency(prod.price_history[0]?.price||0)}</TableCell>
+                                  <TableCell>
+                                    <DropdownMenu key={prod.id}>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button
+                                          aria-haspopup="true"
+                                          size="icon"
+                                          variant="ghost"
+                                        >
+                                          <MoreHorizontal className="h-4 w-4" />
+                                          <span className="sr-only">Toggle menu</span>
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end" className="w-[100px]">
+                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                        <Button onClick={onClickAddProduct(prod.id)} size={"sm"} variant={"outline"} className=" w-full">
+                                          Edit
+                                        </Button>
+                                        {status==="AVAILABLE"?<Button
+                                        disabled={archiveProductPending}
+                                        onClick={onArchiveProduct(prod.id, "NOT_AVAILABLE")}
+                                        size={"sm"}
+                                        variant={"outline"}
+                                        className=" mt-1 w-full border-orange-500 text-orange-500">
+                                          Not Available
+                                        </Button>:<Button
+                                        disabled={archiveProductPending}
+                                        onClick={onArchiveProduct(prod.id, "AVAILABLE")}
+                                        size={"sm"}
+                                        variant={"outline"}
+                                        className=" mt-1 w-full border-orange-500 text-orange-500">
+                                          Available
+                                        </Button>}
+                                        {!prod.orders.length && <Button 
+                                        disabled={isPending} 
+                                        onClick={()=>deleteProduct({id:Number(prod.id)})} 
+                                        size={"sm"} 
+                                        variant={"outline"} 
+                                        className=" border border-red-400 mt-1 text-red-400 bg-red-50 w-full">
+                                          Delete
+                                        </Button>}
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  </TableCell>
+                                </TableRow>)
+                            })
                           }
                         </TableBody> : <></>}
                       </Table>

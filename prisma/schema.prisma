@@ -45,7 +45,10 @@ model products {
   id            Int                     @id @default(autoincrement())
   product_name  String
   admin_id      Int
+<<<<<<< HEAD
   amount        Float
+=======
+>>>>>>> a7c8b73c80437203184002080c6f42a19d256390
   status        product_status          @default(AVAILABLE)
   createdAt     DateTime                @default(now())
   updatedAt     DateTime                @updatedAt
@@ -66,12 +69,23 @@ model product_category {
 }
 
 model orders {
+<<<<<<< HEAD
   id             Int         @id @default(autoincrement())
   product_id     Int
   quantity       Int
   transaction_id Int
   product        products    @relation(fields: [product_id], references: [id])
   transaction    transaction @relation(fields: [transaction_id], references: [id])
+=======
+  id               Int                   @id @default(autoincrement())
+  product_id       Int
+  product_price_id Int 
+  quantity         Int
+  transaction_id   Int
+  product          products              @relation(fields: [product_id], references: [id])
+  product_price product_price_history @relation(fields: [product_price_id], references: [id])
+  transaction      transaction           @relation(fields: [transaction_id], references: [id], onDelete: Cascade)
+>>>>>>> a7c8b73c80437203184002080c6f42a19d256390
 }
 
 model transaction {
@@ -168,6 +182,11 @@ model product_price_history {
   price      Float
   createdAt  DateTime @default(now())
   product    products @relation(fields: [product_id], references: [id])
+<<<<<<< HEAD
+=======
+
+  orders orders[]
+>>>>>>> a7c8b73c80437203184002080c6f42a19d256390
 }
 
 enum admin_type {

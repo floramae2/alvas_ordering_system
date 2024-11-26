@@ -9,7 +9,7 @@ import { useState } from "react"
 import { useParams } from "next/navigation"
 import PendingTables from "./_components/pendings-table"
 import { ViewTransactionModal } from "./_components/view-transaction-modal"
-import { $Enums, barangays, customer, grouped_delivery_by_customer, type delivery_rider, type orders, type products, type transaction } from "@prisma/client"
+import { $Enums, barangays, customer, grouped_delivery_by_customer, type delivery_rider, type orders, type products, type transaction, product_price_history } from "@prisma/client"
 import DoneTable from "./_components/done-table"
 import CancelledTable from "./_components/cancelled-table"
 import { LoaderCircle } from "lucide-react"
@@ -29,7 +29,7 @@ export type TransactionType = {
     createdAt: Date;
     barangay: string;
     transactions: (transaction & {
-      orders: (orders & { product: products })[];
+      orders: (orders & { product: products; product_price : product_price_history })[];
       customer?: (customer & { barangay: barangays }) | null
     })[];
     rider: delivery_rider | null;

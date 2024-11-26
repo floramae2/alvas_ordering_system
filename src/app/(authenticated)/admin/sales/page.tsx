@@ -26,18 +26,19 @@ import {
 } from "@/components/ui/table";
 import { endOfDay, format, setHours, startOfDay, startOfMonth } from "date-fns";
 import { type DateRange } from "react-day-picker";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { orders, products } from "@prisma/client";
+import { orders, product_price_history, products } from "@prisma/client";
 import Loading from "../_components/loading";
 import NoFound from "./table-components/no-found";
 import { DataPagination } from "./table-components/pagination";
 import { formatCurrency } from "@/app/_utils/format";
 import { PaginationType } from "@/lib/types/pagination";
 import { CSVLink, CSVDownload } from "react-csv";
+import { useReactToPrint } from "react-to-print";
 
 type Sales = {
   category: string;
@@ -50,13 +51,11 @@ const Staffs = () => {
     from: startOfMonth(setHours(new Date(), 0)),
     to: setHours(new Date(), 24),
   });
+  const contentRef = useRef<HTMLDivElement>(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
   const [showBy, setShowBy] = useState<"CATEGORY" | "PRODUCT">("PRODUCT");
   const [sortBy, setSortBy] = useState<"NAME" | "SALES">("SALES");
   const [sorting, setSorting] = useState<"ASC" | "DESC">("ASC");
-  const [pagination, setPagination] = useState<PaginationType>({
-    take: 20,
-    skip: 0,
-  });
   const [dateShow, setDateShow] = useState<{ from: Date; to: Date }>({
     from: startOfMonth(setHours(new Date(), 0)),
     to: setHours(new Date(), 24),
@@ -71,12 +70,13 @@ const Staffs = () => {
       enabled: !!date?.from && !!date.to,
     },
   );
+  const {mutate} = api.sales.populate.useMutation()
   useEffect(() => {
     let salesData: Sales[] = [];
-    const orders = [] as (orders & { product: products; category: string })[];
+    const orders = [] as (orders & { product: products; category: string; product_price : product_price_history })[];
     transactions?.forEach((tran) =>
       tran.orders.forEach((ord) => {
-        orders.push({ ...ord, category: ord.product.category.category_name });
+        orders.push({ ...ord, category: ord.product.category.category_name, product_price:ord.product_price });
       }),
     );
     const data: { [key: string]: Sales } = {};
@@ -88,7 +88,7 @@ const Staffs = () => {
           count: (foundData?.count || 0) + 1,
           product_name: ord.product.product_name,
           total_sales:
-            (foundData?.total_sales || 0) + (ord.quantity + ord.product.amount),
+            (foundData?.total_sales || 0) + (ord.quantity + ord.product_price.price),
         };
       });
     } else {
@@ -100,7 +100,7 @@ const Staffs = () => {
           product_name: ord.product.product_name,
           count: (foundData?.count || 0) + 1,
           total_sales:
-            (foundData?.total_sales || 0) + (ord.quantity + ord.product.amount),
+            (foundData?.total_sales || 0) + (ord.quantity + ord.product_price.price),
         };
       });
     }
@@ -149,6 +149,7 @@ const Staffs = () => {
       <div className="flex flex-row items-center justify-between gap-1">
         <div className="flex flex-row gap-1">
           <div className="flex flex-row gap-1 text-sm font-bold">
+            {/* <button onClick={()=>mutate()}>populate</button> */}
             <Select
               value={showBy}
               onValueChange={(e) => setShowBy(e as "CATEGORY" | "PRODUCT")}
@@ -239,14 +240,14 @@ const Staffs = () => {
               </PopoverContent>
             </Popover>
           </div>
-          <CSVLink
+          {/* <CSVLink
             className="flex w-[150px] flex-row justify-center rounded bg-primary p-5 py-2 text-sm text-white shadow"
             data={[
               ...sales,
               {
                 category: "Total Sale",
                 product_name: "",
-                count:undefined,
+                count: undefined,
                 total_sales: sales.reduce(
                   (arr, curr) => arr + curr.total_sales,
                   0,
@@ -270,38 +271,39 @@ const Staffs = () => {
             })}
           >
             Download CSV
-          </CSVLink>
+          </CSVLink> */}
+        <Button onClick={()=>reactToPrintFn()}>Print Report</Button>
         </div>
       </div>
-      <div className="flex w-full flex-col gap-5">
-        <div className="px-1 py-5 text-xl font-bold text-orange-500">
-          Sale of {format(dateShow.from, "PPP")} to {format(dateShow.to, "PPP")}
+      <div ref={contentRef}>
+        <div className="flex w-full flex-col gap-5">
+          <div className="px-1 py-5 text-xl font-bold text-orange-500">
+            Sale of {format(dateShow.from, "PPP")} to{" "}
+            {format(dateShow.to, "PPP")}
+          </div>
         </div>
-      </div>
-      <div className="rounded border p-1 px-2 shadow">
-        <Table>
-          <TableHeader>
-            <TableRow className="">
-              {showBy === "PRODUCT" && (
+        <div className="rounded border p-1 px-2 shadow">
+          <Table>
+            <TableHeader>
+              <TableRow className="">
+                {showBy === "PRODUCT" && (
+                  <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
+                    Product Name
+                  </TableHead>
+                )}
                 <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
-                  Product Name
+                  Category
                 </TableHead>
-              )}
-              <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
-                Category
-              </TableHead>
-              <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
-                Orders
-              </TableHead>
-              <TableHead className="text-end text-xl font-bold uppercase text-black dark:text-white">
-                Sales
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sales
-              ?.slice(pagination.skip, pagination.skip + pagination.take)
-              .map((sale, index) => {
+                <TableHead className="text-start text-xl font-bold uppercase text-black dark:text-white">
+                  Orders
+                </TableHead>
+                <TableHead className="text-end text-xl font-bold uppercase text-black dark:text-white">
+                  Sales
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sales?.map((sale, index) => {
                 return (
                   <TableRow key={index}>
                     {showBy === "PRODUCT" && (
@@ -312,29 +314,23 @@ const Staffs = () => {
                     <TableCell className="text-start">
                       {sale.category}
                     </TableCell>
-                    <TableCell className="text-start">
-                      {sale.count}
-                    </TableCell>
+                    <TableCell className="text-start">{sale.count}</TableCell>
                     <TableCell className="text-end">
                       {formatCurrency(sale.total_sales)}
                     </TableCell>
                   </TableRow>
                 );
               })}
-          </TableBody>
-        </Table>
-        {isLoading && <Loading />}
-        {!isLoading && !sales.length && <NoFound />}
-        <DataPagination
-          count={sales.length || 0}
-          filter={pagination}
-          setFilter={setPagination}
-        />
-        <div className="flex items-center justify-end p-3 px-5 pt-0 text-base font-bold">
-          Total Sales :{" "}
-          {formatCurrency(
-            sales.reduce((arr, curr) => arr + curr.total_sales, 0),
-          )}
+            </TableBody>
+          </Table>
+          {isLoading && <Loading />}
+          {!isLoading && !sales.length && <NoFound />}
+          <div className="flex items-center justify-end p-3 px-5 pt-0 text-base font-bold">
+            Total Sales :{" "}
+            {formatCurrency(
+              sales.reduce((arr, curr) => arr + curr.total_sales, 0),
+            )}
+          </div>
         </div>
       </div>
     </div>

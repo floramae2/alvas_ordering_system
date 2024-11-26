@@ -13,6 +13,7 @@ import {
   products,
   transaction,
   type $Enums,
+  product_price_history,
 } from "@prisma/client";
 import OpenShowTransaction from "./[id]/modal";
 
@@ -30,7 +31,7 @@ export type Transaction = {
   createdAt: Date;
   barangay: string;
   transactions: (transaction & {
-    orders: (orders & { product: products })[];
+    orders: (orders & { product: products; product_price : product_price_history })[];
     customer?: (customer & { barangay: barangays }) | null;
   })[];
   rider: delivery_rider | null;

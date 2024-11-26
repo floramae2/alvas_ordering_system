@@ -6,7 +6,7 @@ import {
 import { api } from "@/trpc/react"
 import { useState } from "react"
 import { useParams } from "next/navigation"
-import { grouped_delivery_by_customer, type customer, type orders, type products, type transaction } from "@prisma/client"
+import { grouped_delivery_by_customer, type customer, type orders, type products, type transaction, product_price_history } from "@prisma/client"
 import { RefreshCcw, TableProperties, Truck } from "lucide-react"
 import ForDelivery from "./_components/delivery"
 import Delivered from "./_components/delivered"
@@ -26,7 +26,7 @@ const menu = [{
 
 export type TransactionType = grouped_delivery_by_customer & {
     transactions : (transaction & {
-        orders: (orders & { product: products })[],
+        orders: (orders & { product: products; product_price:product_price_history })[],
         customer: customer | null
     })[]
 }

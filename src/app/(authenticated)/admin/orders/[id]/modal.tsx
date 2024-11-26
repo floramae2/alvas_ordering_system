@@ -73,7 +73,7 @@ const OpenShowTransaction = ({
                             {order.product.product_name} x{" "}
                             <span>{order.quantity}</span>
                           </span>
-                          <span>{formatCurrency(order.product.amount)}</span>
+                          <span>{formatCurrency(order.product_price.price)}</span>
                         </li>
                       ))}
                     </div>

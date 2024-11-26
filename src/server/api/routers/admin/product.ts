@@ -6,8 +6,13 @@ export const productRouter = createTRPCRouter({
     getAllProducts: publicProcedure.query(({ ctx }) => {
         return ctx.db.products.findMany({
             include:{
+                price_history:{
+                    orderBy : {
+                        createdAt:"desc"
+                    }
+                },
                 category:true,
-                orders:true,
+                orders:true
             }
         })
     }),
@@ -17,6 +22,13 @@ export const productRouter = createTRPCRouter({
         return ctx.db.products.findUnique({
             where:{
                 id:input.id
+            },
+            include : {
+                price_history : {
+                    orderBy : {
+                        createdAt : "desc"
+                    }
+                }
             }
         })
     }),
@@ -51,8 +63,18 @@ export const productRouter = createTRPCRouter({
             amount: z.coerce.number(),
             admin_id: z.number()
         }))
-        .mutation(({ input, ctx }) => {
-            return ctx.db.products.upsert({
+        .mutation(async({ input, ctx }) => {
+            const product = await ctx.db.products.findUnique({
+                where : { id : input.id || 0},
+                include : {
+                    price_history : {
+                        orderBy : {
+                            createdAt : "desc"
+                        }
+                    }
+                }
+            })
+            return await ctx.db.products.upsert({
                 where: {
                     id: input.id || 0
                 },
@@ -60,14 +82,25 @@ export const productRouter = createTRPCRouter({
                     image_url: input.image_url,
                     product_name: input.product_name,
                     category_id: input.category_id,
-                    amount: input.amount,
-                    admin_id: input.admin_id
+                    admin_id: input.admin_id,
+                    price_history : {
+                        create : [{
+                            price : input.amount
+                        }]
+                    }
                 },
                 update: {
                     image_url: input.image_url,
                     product_name: input.product_name,
                     category_id: input.category_id,
-                    amount: input.amount,
+                    price_history : {
+                        create : product?.price_history[0]?.price !== input.amount ? [{
+                            price : input.amount
+                        }] : []
+                    } 
+                },
+                include:{
+                    price_history:true
                 }
             })
         }),

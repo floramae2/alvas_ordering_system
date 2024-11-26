@@ -59,7 +59,7 @@ const SettingsPage = () => {
   })
 
   const { mutate: updateDefaultPassForStaff, isPending: updateDefaultPassForStaffIsPending } = api.settings.updateDefaultPassForStaff.useMutation({
-    onSuccess: () => onSuccess({ description: "Delivery fee updated successfully." })
+    onSuccess: () => onSuccess({ description: "Password changed successfully." })
   })
 
   useEffect(() => {

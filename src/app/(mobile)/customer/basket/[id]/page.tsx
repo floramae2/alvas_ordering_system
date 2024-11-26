@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { api } from "@/trpc/react";
 import Loading from "../_components/loading";
 import { useState } from "react";
-import { type $Enums } from "@prisma/client";
+import { product_price_history, type $Enums } from "@prisma/client";
 import { ShoppingBasket } from "lucide-react";
 import { AddOrderModal } from "./_components/add-order-modal";
 import { SubmitOrderModal } from "./_components/submit-order-modal";
@@ -29,10 +29,10 @@ export type ProductType = {
   admin_id: number;
   category_id: number;
   quantity: number;
-  amount: number;
   status: $Enums.product_status;
   createdAt: Date;
   updatedAt: Date;
+  price_history : product_price_history[]
 };
 
 const Page = () => {
@@ -153,9 +153,9 @@ const Page = () => {
                         {prod.products.map((product) => {
                         return (
                           <div
-                            onClick={() =>
-                              setSelectedProduct({ ...product, quantity: 1 })
-                            }
+                          onClick={()=>{
+                            product.status==="AVAILABLE" && setSelectedProduct({...product, quantity : 1})
+                        }}
                             key={product.id}
                             className={`relative flex h-36 w-28 flex-none cursor-pointer flex-col justify-end overflow-hidden rounded border transition-all hover:brightness-90`}
                           >
@@ -169,6 +169,7 @@ const Page = () => {
                             <div className="z-10 w-full self-end bg-black bg-opacity-70 p-2 text-xs text-white">
                               {product.product_name}
                             </div>
+                            {product.status==="NOT_AVAILABLE" &&<div className=" text-white font-bold bg-opacity-70 flex items-center justify-center absolute top-0 bottom-0 left-0 right-0 bg-black text-wrap text-center">NOT AVAILABLE</div>}
                           </div>
                         );
                       })}

@@ -20,6 +20,7 @@ export const salesRouter = createTRPCRouter({
         include : {
           orders : {
             include : {
+              product_price : true,
               product : {
                 include : {
                   category : true
@@ -29,5 +30,27 @@ export const salesRouter = createTRPCRouter({
           }
         }
     })
+}),
+populate: publicProcedure
+.mutation(async({ ctx }) => {
+  const transactions = await ctx.db.transaction.findMany({
+    include : {
+      orders : {
+        include : {
+          product_price : true
+        }
+      }
+    }
+  })
+  return await Promise.all(transactions?.map((trans)=>{
+    return ctx.db.transaction.update({
+      where : {
+        id:trans.id
+      },
+      data : {
+        total_amount : trans.orders.reduce((acc, curr)=>acc+curr.product_price.price,0)
+      }
+    })
+  }))
 }),
 });

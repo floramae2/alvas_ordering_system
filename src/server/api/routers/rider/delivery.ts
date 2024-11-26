@@ -18,7 +18,8 @@ export const riderDeliveryRouter = createTRPCRouter({
             include: {
               orders: {
                 include: {
-                  product: true
+                  product: true,
+                  product_price:true
                 }
               },
               customer: true
@@ -45,7 +46,8 @@ export const riderDeliveryRouter = createTRPCRouter({
             include: {
               orders: {
                 include: {
-                  product: true
+                  product: true,
+                  product_price:true
                 }
               },
               customer: true

@@ -117,7 +117,7 @@ const Page = () => {
 
   useEffect(()=>{
     if(product){
-      form.setValue("amount", product.amount)
+      form.setValue("amount", product.price_history[0]?.price || 0)
       form.setValue("product_name", product.product_name)
       form.setValue("category_id", product.category_id)
       setProductImage(product.image_url)

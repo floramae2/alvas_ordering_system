@@ -84,7 +84,7 @@ export default function OrderModal({ open, setOpen }: {
     if (!open) return <></>
 
     const totalAmount = open.transactions.reduce((arr, curr) => {
-        return arr + curr.orders.reduce((ar, cu) => ar + (cu.product.amount * cu.quantity), 0)
+        return arr + curr.orders.reduce((ar, cu) => ar + (cu.product_price.price * cu.quantity), 0)
     }, 0)
     const transaction = open?.transactions || []
 
@@ -130,7 +130,7 @@ export default function OrderModal({ open, setOpen }: {
                                                     return <div key={order.product.id} className=" flex flex-row justify-between w-full">
                                                         <p>{order.product.product_name} X {order.quantity}</p>
                                                         <div className=" flex flex-row gap-2">
-                                                            <p>{formatCurrency(order.product.amount * order.quantity)}</p>
+                                                            <p>{formatCurrency(order.product_price.price * order.quantity)}</p>
                                                         </div>
                                                     </div>
                                                 })

@@ -98,7 +98,7 @@ const FormCashier = () => {
     const onSubmitProduct = async (data: z.infer<typeof CreateCashier>) => {
 
         let image = productImage
-        //setter of iamge if product image was uploaded
+        //setter of image if product image was uploaded
         if (data.profile_image) {
             image = await _uploadImage(data.profile_image)
         }
@@ -177,7 +177,7 @@ const FormCashier = () => {
                                     </div>
                                 </FormControl>
                                 <FormDescription>
-                                    This is your image for the product.
+                                    This is for staff's profile picture.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

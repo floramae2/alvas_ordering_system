@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { $Enums, barangays, customer, delivery_rider, orders, products, transaction } from "@prisma/client";
+import { $Enums, barangays, customer, delivery_rider, orders, product_price_history, products, transaction } from "@prisma/client";
 
 export const customerTransactionRouter = createTRPCRouter({
   getCustomerTransactions: publicProcedure
@@ -23,7 +23,7 @@ export const customerTransactionRouter = createTRPCRouter({
           createdAt: Date;
           barangay: string;
           transactions: (transaction & {
-            orders: (orders & { product: products })[];
+            orders: (orders & { product: products; product_price:product_price_history })[];
             customer?: (customer & { barangay: barangays }) | null
           })[];
           rider: delivery_rider | null;
@@ -40,7 +40,8 @@ export const customerTransactionRouter = createTRPCRouter({
         include: {
           orders: {
             include: {
-              product: true
+              product: true,
+              product_price : true
             }
           },
           customer: {

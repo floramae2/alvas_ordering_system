@@ -8,7 +8,7 @@ import Loading from "../_components/loading"
 import { useState } from "react"
 import { useParams } from "next/navigation"
 import { ViewTransactionModal } from "./_components/view-transaction-modal"
-import { customer, grouped_delivery_by_customer, type delivery_rider, type orders, type products, type transaction } from "@prisma/client"
+import { customer, grouped_delivery_by_customer, type delivery_rider, type orders, type products, type transaction, product_price_history } from "@prisma/client"
 import DoneTable from "./_components/done-table"
 import CancelledTable from "./_components/cancelled-table"
 
@@ -16,7 +16,7 @@ const statuses = ["DONE", "CANCELLED"] as ("DONE"| "CANCELLED")[]
 
 export type TransactionType = grouped_delivery_by_customer & {
     transactions : (transaction & {
-        orders: (orders & { product: products })[],
+        orders: (orders & { product: products; product_price:product_price_history })[],
         customer: customer | null
     })[];
     rider : delivery_rider

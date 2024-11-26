@@ -53,7 +53,7 @@ export function ViewTransactionModal({ open, setOpen }: {
     if (!open) return <></>
 
     const totalAmount = open.transactions.reduce((arr, curr) => {
-        return arr + curr.orders.reduce((a, c) => (a + (c.product.amount * c.quantity)), 0)
+        return arr + curr.orders.reduce((a, c) => (a + (c.product_price.price * c.quantity)), 0)
     }, 0)
     const transaction = open?.transactions || []
     const onCancel = async (ids: number[]) => {
@@ -90,7 +90,7 @@ export function ViewTransactionModal({ open, setOpen }: {
                                                     return <div key={order.product.id} className=" flex flex-row justify-between w-full">
                                                         <p>{order.product.product_name} X {order.quantity}</p>
                                                         <div className=" flex flex-row gap-2">
-                                                            <p>{formatCurrency(order.product.amount * order.quantity)}</p>
+                                                            <p>{formatCurrency(order.product_price.price * order.quantity)}</p>
                                                         </div>
                                                     </div>
                                                 })

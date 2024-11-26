@@ -44,7 +44,7 @@ export function SubmitOrderModal({ open, setOpen, products, setProducts }: {
     if (!open) return <></>
 
     const totalAmount = products.reduce((arr, curr) => {
-        return arr + (curr.amount * curr.quantity)
+        return arr + ((curr.price_history[0]?.price||0) * curr.quantity)
     }, 0)
 
 
@@ -55,7 +55,8 @@ export function SubmitOrderModal({ open, setOpen, products, setProducts }: {
                 cashier_id : user.id,
                 orders : products.map((prod)=>({
                     product_id:prod.id,
-                    quantity : prod.quantity
+                    quantity : prod.quantity,
+                    product_price_id : prod.price_history[0]?.id||0
                 }
                 ))
             })
@@ -84,7 +85,7 @@ export function SubmitOrderModal({ open, setOpen, products, setProducts }: {
                                 products?.map((product) => {
                                     return <div key={product.id} className=" flex flex-row justify-between w-full">
                                         <p>{product.product_name} X {product.quantity}</p>
-                                        <p>{formatCurrency(product.amount * product.quantity)}</p>
+                                        <p>{formatCurrency((product.price_history[0]?.price||0) * product.quantity)}</p>
                                     </div>
                                 })
                             }

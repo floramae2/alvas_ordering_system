@@ -63,7 +63,7 @@ export function AddOrderModal({ open, setOpen, setSelectedProducts }: {
                     <div className=" flex flex-col flex-1">
                         <div className=" flex flex-col gap-2">
                             <p className=" font-bold">{open.product_name}</p>
-                            <p className=" text-sm font-bold">Price : {formatCurrency(open.amount)}</p>
+                            <p className=" text-sm font-bold">Price : {formatCurrency(open.price_history[0]?.price || 0)}</p>
                         </div>
                         <div className=" w-full px-5 flex flex-col justify-end h-full gap-1">
                             <p className=" text-sm font-bold">Quantity</p>

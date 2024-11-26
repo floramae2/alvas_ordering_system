@@ -62,8 +62,8 @@ export function SubmitOrderModal({
 
   if (!open) return <></>;
   const totalAmount = products.reduce((arr, curr) => {
-    console.log("2", arr, curr.amount * curr.quantity);
-    return arr + curr.amount * curr.quantity;
+    console.log("2", arr, (curr.price_history[0]?.price || 0) * curr.quantity);
+    return arr + ((curr.price_history[0]?.price || 0)  * curr.quantity);
   }, 0);
 
   const onSubmit = async () => {
@@ -74,6 +74,7 @@ export function SubmitOrderModal({
         orders: products.map((prod) => ({
           product_id: prod.id,
           quantity: prod.quantity,
+          product_price_id : prod.price_history[0]?.price||0
         })),
       });
     }
@@ -127,7 +128,7 @@ export function SubmitOrderModal({
                       </p>
                       <div className="flex flex-row gap-2">
                         <p>
-                          {formatCurrency(product.amount * product.quantity)}
+                          {formatCurrency((product.price_history[0]?.price || 0)  * product.quantity)}
                         </p>
                         <div className="text-white">
                           <Minus

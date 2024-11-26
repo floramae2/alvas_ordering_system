@@ -28,6 +28,8 @@ import NoFound from "./_components/table-components/no-found"
 import { DataPagination } from "./_components/table-components/pagination"
 import { type PaginationType } from "@/lib/types/pagination"
 import { formatCurrency } from "@/app/_utils/format"
+import { LoaderCircle } from "lucide-react"
+import { product_price_history } from "@prisma/client"
 export type TransactionType = {
     id: number;
     admin_id: number;
@@ -45,9 +47,9 @@ export type TransactionType = {
       transaction_id :number;
       quantity :number;
       product : {
-        amount:number;
         product_name : string;
-      }
+      };
+      product_price:product_price_history
     }[]
 }
 const Page = () => {
@@ -62,13 +64,17 @@ const Page = () => {
     })
     const [selectedTransaction , setSelectedTransaction] = useState<TransactionType | undefined>(undefined)
 
-    const { data:transactions, isLoading:transactionsIsLoading} = api.user_cashier.transaction.getTransactions.useQuery({
+    const { data:transactions, isLoading:transactionsIsLoading, refetch, isRefetching} = api.user_cashier.transaction.getTransactions.useQuery({
         cashier_id : user?.id || 0,
         from : date?.from || new Date(),
         to : date?.to || new Date()
     }, {
         enabled : !!date && !!user
     })
+    console.log(transactions)
+    const refetchTransaction =  async() => {
+        await refetch()
+    }
     return (
 
         <div className="grid gap-1 sm:grid-cols-2 md:grid-cols-3">
@@ -119,11 +125,14 @@ const Page = () => {
                         </Popover>
                     </CardHeader>
                     <CardContent className=" relative rounded-lg overflow-y-auto max-h-[600px] min-h-[300px]">
-                        <div className=" flex flex-col gap-3 overflow-hidden bg-background border shadow-md rounded-lg">
-                            <TransactionTable transactions={transactions?.slice(pagination.skip, pagination.skip+pagination.take)} setSelectedTransaction={setSelectedTransaction} selectedTransaction={selectedTransaction}/>
+                        <div className=" flex flex-col gap-3 overflow-hidden bg-background border shadow-md rounded-lg relative">
+                            <TransactionTable refetch={refetchTransaction} transactions={transactions?.slice(pagination.skip, pagination.skip+pagination.take)} setSelectedTransaction={setSelectedTransaction} selectedTransaction={selectedTransaction}/>
                             {transactionsIsLoading && <Loading />}
                             {!transactionsIsLoading && !transactions?.length && <NoFound />}
                             <DataPagination count={transactions?.length || 0} filter={pagination} setFilter={setPagination} />
+                        {isRefetching && <div className="flex w-full absolute items-center justify-center top-0 left-0 right-0 bottom-0 bg-black bg-opacity-35 text-white z-10">
+                          <LoaderCircle className="animate-spin" /> Loading
+                        </div>}
                         </div>
                     </CardContent>
                 </Card>
@@ -147,9 +156,10 @@ const Page = () => {
                                 <div className=" flex flex-col gap-4">
                                         {
                                             selectedTransaction.orders?.map((order)=>{
+                                                console.log(order)
                                                 return <div key={order.id} className=" flex flex-row justify-between w-full">
                                                     <p>{order.product.product_name} X {order.quantity}</p>
-                                                    <p>{formatCurrency(order.product.amount * order.quantity)}</p>
+                                                    <p>{formatCurrency(order.product_price.price * order.quantity)}</p>
                                                     </div>
                                             })
                                         }

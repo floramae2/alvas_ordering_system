@@ -2,7 +2,7 @@ import { z } from "zod";
 /* eslint-disable @typescript-eslint/consistent-indexed-object-style */
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { $Enums, barangays, customer, delivery_rider, orders, products, transaction } from "@prisma/client";
+import { $Enums, barangays, customer, delivery_rider, orders, product_price_history, products, transaction } from "@prisma/client";
 
 export const transactionRouter = createTRPCRouter({
   getAdminOrders: publicProcedure
@@ -23,7 +23,7 @@ export const transactionRouter = createTRPCRouter({
           createdAt: Date;
           barangay: string;
           transactions: (transaction & {
-            orders: (orders & { product: products })[];
+            orders: (orders & { product: products; product_price:product_price_history })[];
             customer?: (customer & { barangay: barangays }) | null
           })[];
           rider: delivery_rider | null;
@@ -39,7 +39,8 @@ export const transactionRouter = createTRPCRouter({
           rider: true,
           orders: {
             include: {
-              product: true
+              product: true,
+              product_price : true
             }
           },
           grouped_delivery : true,
@@ -89,7 +90,8 @@ export const transactionRouter = createTRPCRouter({
         include: {
           orders: {
             include: {
-              product: true
+              product: true,
+              product_price:true
             }
           },
           customer: true,
@@ -105,7 +107,7 @@ export const transactionRouter = createTRPCRouter({
               orders: transaction.orders.map(order => ({
                 product_name: order.product.product_name,
                 quantity: order.quantity,
-                price: order.product.amount
+                price: order.product_price.price
               })),
               sub_total: transaction.total_amount,
               delivery_fee: transaction.grouped_delivery?.delivery_fee || 0
