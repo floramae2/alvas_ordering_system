@@ -250,6 +250,9 @@ export const transactionRouter = createTRPCRouter({
           rider: true,
           customer: true,
           grouped_delivery:true
+        },
+        orderBy:{
+          updatedAt:"desc"
         }
       }).then((transacs) => {
         const transactions = transacs.map((transaction) => {

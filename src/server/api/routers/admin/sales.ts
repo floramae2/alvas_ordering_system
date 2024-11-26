@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { endOfDay, startOfDay } from "date-fns";
 
 export const salesRouter = createTRPCRouter({
   getSales: publicProcedure
@@ -13,8 +14,8 @@ export const salesRouter = createTRPCRouter({
         where : {
           status : "DONE",
           createdAt:{
-            gte:from,
-            lte:to
+            gte:startOfDay(from),
+            lte:endOfDay(to)
           }
         },
         include : {

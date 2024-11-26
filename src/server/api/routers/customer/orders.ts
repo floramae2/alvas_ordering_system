@@ -8,7 +8,11 @@ export const customerOrderRouter = createTRPCRouter({
         const categories = await ctx.db.product_category.findMany()
           const products = await ctx.db.products.findMany({
             include : {
-              price_history: true
+              price_history: {
+                orderBy : {
+                  createdAt : "desc"
+                }
+              }
             }
           })
           if(categories && products){
@@ -39,13 +43,12 @@ export const customerOrderRouter = createTRPCRouter({
         orders
       }, ctx }) => {
         const admin = await ctx.db.admin.findFirst()
-        const settings = await ctx.db.settings.findFirst()
         const customer = await ctx.db.customer.findUnique({
           where : {
             id: customer_id
           }
         })
-        if(admin && customer && settings) {
+        if(admin && customer) {
           return await ctx.db.transaction.create({
             data : {
               total_amount,

@@ -1,15 +1,16 @@
 
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { setHours, startOfMonth } from "date-fns";
+import { format, setHours, startOfMonth } from "date-fns";
 
 export const dashboardRouter = createTRPCRouter({
   dashboardData: publicProcedure
     .query(async ({ ctx }) => {
+        console.log(format(startOfMonth(setHours(new Date, 0)), "PPP"), format(setHours(new Date(), 24), "PPP"))
         const salesThisMonth = () => ctx.db.transaction.aggregate({
             where : {
                 status : "DONE",
-                updatedAt : {
+                createdAt : {
                     gte : startOfMonth(setHours(new Date, 0)),
                     lte : setHours(new Date(), 24),
                 }

@@ -48,7 +48,7 @@ export default function TransactionTable({
   }, 0);
   const isDateWithinFiveMinutes = (dateToCheck: Date): boolean => {
     const now = new Date();
-    const fiveMinutesBefore = sub(now, { minutes: 90 });
+    const fiveMinutesBefore = sub(now, { minutes: 5 });
     return isWithinInterval(dateToCheck, {
       start: now,
       end: fiveMinutesBefore,

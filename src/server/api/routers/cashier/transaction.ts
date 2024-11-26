@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { endOfDay, startOfDay } from "date-fns";
 
 export const cashierTransactionRouter = createTRPCRouter({
     getTransactions: publicProcedure
@@ -13,8 +14,8 @@ export const cashierTransactionRouter = createTRPCRouter({
         return await ctx.db.transaction.findMany({
             where : {
                 createdAt : {
-                    lte : to,
-                    gte : from
+                    lte : endOfDay(to),
+                    gte : startOfDay(from)
                 },
                 cashier_id
             },

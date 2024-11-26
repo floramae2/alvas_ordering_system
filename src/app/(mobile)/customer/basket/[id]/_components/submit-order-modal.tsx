@@ -74,7 +74,7 @@ export function SubmitOrderModal({
         orders: products.map((prod) => ({
           product_id: prod.id,
           quantity: prod.quantity,
-          product_price_id : prod.price_history[0]?.price||0
+          product_price_id : prod.price_history[0]?.id||0
         })),
       });
     }

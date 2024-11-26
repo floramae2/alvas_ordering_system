@@ -70,7 +70,6 @@ const Staffs = () => {
       enabled: !!date?.from && !!date.to,
     },
   );
-  const {mutate} = api.sales.populate.useMutation()
   useEffect(() => {
     let salesData: Sales[] = [];
     const orders = [] as (orders & { product: products; category: string; product_price : product_price_history })[];
@@ -85,10 +84,10 @@ const Staffs = () => {
         const foundData = data[ord.category];
         data[ord.category] = {
           category: ord.category,
-          count: (foundData?.count || 0) + 1,
+          count: (foundData?.count || 0) + ord.quantity,
           product_name: ord.product.product_name,
           total_sales:
-            (foundData?.total_sales || 0) + (ord.quantity + ord.product_price.price),
+            (foundData?.total_sales || 0) + (ord.quantity * ord.product_price.price),
         };
       });
     } else {
@@ -98,9 +97,9 @@ const Staffs = () => {
         data[ord.product.product_name + ord.product.product_name] = {
           category: ord.category,
           product_name: ord.product.product_name,
-          count: (foundData?.count || 0) + 1,
+          count: (foundData?.count || 0) + ord.quantity,
           total_sales:
-            (foundData?.total_sales || 0) + (ord.quantity + ord.product_price.price),
+            (foundData?.total_sales || 0) + (ord.quantity * ord.product_price.price),
         };
       });
     }
