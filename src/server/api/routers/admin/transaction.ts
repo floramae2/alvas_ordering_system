@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { $Enums, barangays, customer, delivery_rider, orders, product_price_history, products, transaction } from "@prisma/client";
+import { endOfDay, startOfDay } from "date-fns";
 
 export const transactionRouter = createTRPCRouter({
   getAdminOrders: publicProcedure
@@ -240,8 +241,8 @@ export const transactionRouter = createTRPCRouter({
           admin_id,
           status: "DONE",
           createdAt: {
-            gte: date.from,
-            lte: date.to
+            gte: startOfDay(date.from),
+            lte: endOfDay(date.to)
           },
           ...whereTransactionType
         },
