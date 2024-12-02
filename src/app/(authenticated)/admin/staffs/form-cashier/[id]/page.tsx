@@ -177,7 +177,7 @@ const FormCashier = () => {
                                     </div>
                                 </FormControl>
                                 <FormDescription>
-                                    This is for staff's profile picture.
+                                    This is for staff&apos;s profile picture.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
