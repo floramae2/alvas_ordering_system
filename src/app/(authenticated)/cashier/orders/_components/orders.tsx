@@ -94,6 +94,9 @@ const OrdersContent = ({
                     {formatCurrency(transaction.sub_total)}
                   </TableCell>
                   <TableCell className="text-center">
+                    {formatCurrency(transaction.delivery_fee)}
+                  </TableCell>
+                  <TableCell className="text-center">
                     {formatCurrency(transaction.total_amount)}
                   </TableCell>
                 </TableRow>
