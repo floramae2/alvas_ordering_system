@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
 // Initialize Supabase client
 const supabaseUrl = 'https://dbtzyebosltbhukbgmgt.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRidHp5ZWJvc2x0Ymh1a2JnbWd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzMxNDI1NDUsImV4cCI6MjA0ODcxODU0NX0.6yWIxeQAdavPpfiG4HlXoOcv2XjSwQ5-Kthng9FWZbM';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRidHp5ZWJvc2x0Ymh1a2JnbWd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzE0MjU0NSwiZXhwIjoyMDQ4NzE4NTQ1fQ.qKYeLXWCAttbni780B96xXd74TqZW4LOmt2TOmIjIpM';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function uploadImage(file:File) {
